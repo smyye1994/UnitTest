@@ -8,34 +8,51 @@
 import XCTest
 
 class UnitTestUITests: XCTestCase {
-
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
-        continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
+    
+    
     func testExample() throws {
-        // UI tests must launch the application that they test.
         let app = XCUIApplication()
         app.launch()
-
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        
+        let addButton = app.navigationBars["UnitTest.View"].buttons["Add"]
+        let elementsQuery = app.alerts["Add İtem"].scrollViews.otherElements
+        let textField = elementsQuery.collectionViews/*@START_MENU_TOKEN@*/.textFields["Enter İtem"]/*[[".cells.textFields[\"Enter İtem\"]",".textFields[\"Enter İtem\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/
+        let okButton = elementsQuery.buttons["OK"]
+        let addedCell = app.tables.cells.containing(.staticText, identifier:"my to do").element
+        
+        addButton.tap()
+        textField.tap()
+        textField.typeText("my to do")
+        okButton.tap()
+        
+        XCTAssertTrue(addedCell.exists)
     }
+    
+    func testDeleteItem() throws {
+        let app = XCUIApplication()
+        app.launch()
+        
+        let addButton = app.navigationBars["UnitTest.View"].buttons["Add"]
+        let elementsQuery = app.alerts["Add İtem"].scrollViews.otherElements
+        let textField = elementsQuery.collectionViews/*@START_MENU_TOKEN@*/.textFields["Enter İtem"]/*[[".cells.textFields[\"Enter İtem\"]",".textFields[\"Enter İtem\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/
+        let okButton = elementsQuery.buttons["OK"]
+        let addedCell = app.tables.cells.containing(.staticText, identifier:"my to do").element
+        
+        
+        let tablesQuery = app.tables
+        let deleteButton = tablesQuery/*@START_MENU_TOKEN@*/.buttons["Delete"]/*[[".cells.buttons[\"Delete\"]",".buttons[\"Delete\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/
+        addButton.tap()
+        textField.tap()
+        textField.typeText("my to do")
+        okButton.tap()
 
-    func testLaunchPerformance() throws {
-        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {
-            // This measures how long it takes to launch your application.
-            measure(metrics: [XCTApplicationLaunchMetric()]) {
-                XCUIApplication().launch()
-            }
-        }
+        addedCell.swipeLeft()
+        deleteButton.tap()
+        
+        XCTAssertFalse(addedCell.exists)
+        
+        
+        
     }
 }
+
